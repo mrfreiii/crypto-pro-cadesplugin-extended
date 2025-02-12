@@ -1,180 +1,32 @@
-# cadesplugin
+# cadesplugin-extended
 
-![](https://travis-ci.com/bad4iz/crypto-pro-cadesplugin.svg?branch=main)
-![](https://img.shields.io/npm/v/crypto-pro-cadesplugin.svg)
-![](https://img.shields.io/npm/dt/crypto-pro-cadesplugin.svg)
+#### Forked from: https://github.com/bad4iz/crypto-pro-cadesplugin
 
-![](https://img.shields.io/github/commit-activity/m/bad4iz/crypto-pro-cadesplugin.svg)
-![](https://img.shields.io/github/last-commit/bad4iz/crypto-pro-cadesplugin.svg)
+### Изменения:
+* Обновлена версия плагина **cadesplugin_api.js** (от 15.02.2024)
+* Добавлены методы:
+  - **verifyBase64(base64, signature, type)**
+  - **getHashByGOST(base64, type)**
 
-[npm crypto-pro-cadesplugin](https://www.npmjs.com/package/crypto-pro-cadesplugin)  
-
-
-Библиотека предоставляет API для работы c cadesplugin и Крипто Про
-
-> ## Обратите внимание! Для пробной работы с Компонентом вам необходимо иметь
-> * Компьютер под управлением Windows, Linux, MacOS или FreeBSD
-> * Один из современных браузеров (Internet Explorer, Mozilla Firefox, Opera, Chrome, Яндекс.Браузер, Safari) с поддержкой сценариев JavaScript
-> * Установленный плагин для браузера «КриптоПро ЭЦП Browser plug-in» ([Установить](https://www.cryptopro.ru/products/cades/plugin/get_2_0))
-> * Если планируется создание ЭЦП по ГОСТ Р 34.10-2001/2012, то необходимо установить [СКЗИ КриптоПро CSP](https://www.cryptopro.ru/products/csp/overview)
-> * Cертификат ключа подписи, который можно получить на странице [тестового центра](https://www.cryptopro.ru/certsrv/certrqma.asp)
-> * [Проверить работу установленного плагина](https://www.cryptopro.ru/sites/default/files/products/cades/demopage/simple.html)
-
-
-## API
-
-### about()
-
-Выводит информацию о верисии плагина и так далее
-
-### getCertsList()
-
-Получает массив валидных сертификатов
-
-### currentCadesCert(thumbprint)
-
-Получает сертификат по thumbprint значению сертификата
-
-### getCert(thumbprint)
-
-Получает сертификат по thumbprint значению сертификата.
-С помощью этой функции в сертификате доступны методы для парсинга информации о сертификате
-
-### signBase64(thumbprint, base64, type)
-Подписать строку в формате base64
-> Поддерживаемые КриптоПро ЭЦП Browser plug-in браузеры (IE, Firefox, Opera, Chrome, Safari) не предоставляют простого и надежного способа обработки бинарных данных. Таким образом, невозможно обеспечить корректную передачу бинарных данных из браузера в плагин и обратно.
-При подписании произвольных данных рекомендуется предварительно закодировать их в Base64 и использовать свойство ContentEncoding.
-
-> По этой же причине для возвращаемых из КриптоПро ЭЦП Browser plug-in строк, в которых могут содержаться бинарные данные, не поддерживается кодировка CAPICOM_ENCODING_BINARY.
-
-
-### signXml(thumbprint, xml, cadescomXmlSignatureType)
-
-Подписать строку в формате XML
-
-## Custom certs format API
-
-### friendlySubjectInfo()
-
-Возвращает распаршенную информацию о строке subjectInfo
-
-### friendlyIssuerInfo()
-
-Возвращает распаршенную информацию о строке issuerInfo
-
-### friendlyValidPeriod()
-
-Возвращает распаршенную информацию об объекте validPeriod
-
-### possibleInfo(subjectIssuer)
-
-Функция формирует ключи и значения в зависимости от переданного параметра
-Доступные параметры 'subjectInfo' и 'issuerInfo'
-
-### friendlyDate(date)
-
-Формирует дату от переданного параметра
-
-### isValid()
-
-Производит проверку на валидность сертификата
-
-## Usage
-
+### Проверка подписи
+**verifyBase64(base64, signature, type)**\
+Значение ``type`` по умолчанию ``true``(откреплённая подпись, аналогично методу <b>signBase64</b>).\
+Метод возвращает ``undefined``, если подпись валидная.
 ```js
-import cadesplugin from 'crypto-pro-cadesplugin';
+const api = await ccpa();
+const sign = await api.signBase64(thumbprint, dataInBase64);
 
-/**
- * @async
- * @function doCertsList
- * @description формирует массив сертификатов с оригинальными значениями
- */
-async function doCertsList() {
-  const certsApi = await cadesplugin;
-  const certsList = await certsApi.getCertsList();
-
-  return certsList;
-}
-
-/**
- * @async
- * @function doFriendlyCustomCertsList
- * @description формирует массив сертификатов с кастомными полями
- */
-async function doFriendlyCustomCertsList() {
-  const certsApi = await cadesplugin;
-  const certsList = await certsApi.getCertsList();
-
-  const friendlyCertsList = certsList.map(cert => {
-    const friendlySubjectInfo = cert.friendlySubjectInfo();
-    const friendlyIssuerInfo = cert.friendlyIssuerInfo();
-    const friendlyValidPeriod = cert.friendlyValidPeriod();
-    const {
-      to: { ddmmyy, hhmmss }
-    } = friendlyValidPeriod;
-
-    return {
-      subjectInfo: friendlySubjectInfo,
-      issuerInfo: friendlyIssuerInfo,
-      validPeriod: friendlyValidPeriod,
-      thumbprint: cert.thumbprint,
-      title: `${
-        friendlySubjectInfo.filter(el => el.value === 'Владелец')[0].text
-      }. Сертификат действителен до: ${ddmmyy} ${hhmmss}`
-    };
-  });
-}
-```
-### Получение сертификатов на примере react.js
-```js
-import {useMemo, useState} from "react";
-import ccpa from "crypto-pro-cadesplugin";
-
-
-const useDoCertsList = () =>
-    useMemo(async () => {
-        const certsApi = await ccpa();
-        const certsList = await certsApi.getCertsList();
-
-        const list = certsList.map(({subjectInfo, thumbprint}) => ({
-            value: thumbprint,
-            label: subjectInfo
-        }));
-        return list;
-    }, []);
-
-const SelectCert = () => {
-    const [listSert, setListSert] = useState([{value: "подпись", label: "подпись"}]);
-
-    useDoCertsList()
-        .then(setListSert)
-
-    return (
-        <label>
-            <select name="thumbprint" >
-                {
-                    listSert.map(item => (
-                        <option value={item.value} selected>{item.label}</option>
-                    ))
-                }
-            </select>
-            Выберите сертификат
-        </label>
-    );
-};
-
-export default SelectCert;
+const verificationResult = await api.verifyBase64(dataInBase64, sign);
 ```
 
-### Подписание файла в формате base64
+### Вычисление хеш-значения по ГОСТ
+**getHashByGOST(base64, type)**\
+Возможные значения ``type``:\
+``1`` - ГОСТ Р 34.11-94\
+``2`` - ГОСТ Р 34.11-2012 256 бит (значение по умолчанию)\
+``3`` - ГОСТ Р 34.11-2012 512 бит
 ```js
-    const sign = await ccpa.signBase64(thumbprint, sBase64Data);
-```
+const api = await ccpa();
 
-### Подписание файла в формате Xml
-```js
-    const sign = await ccpa.signXml(thumbprint, Xml);
+const hash = await api.getHashByGOST(dataInBase64);
 ```
-
-> пример использования можно посмотреть в библиотеке которая использует этот компонент для React.js **file-signature-in-react**
-> https://github.com/bad4iz/file-signature-in-react

@@ -25,6 +25,7 @@ cadesMethods.init = function init(args) {
   this.O_SIGNER = args.O_SIGNER;
   this.O_SIGNED_XML = args.O_SIGNED_XML;
   this.O_ABOUT = args.O_ABOUT;
+  this.O_HASHED_DATA = args.O_HASHED_DATA;
 };
 
 /**
@@ -88,6 +89,14 @@ cadesMethods.oSignedXml = function oSignedXml() {
 cadesMethods.oAbout = function oAbout() {
   return this.createObject(this.O_ABOUT);
 };
+/**
+ * @method oHashedData
+ * @returns {Object}
+ * @description возвращает созданный объект
+ */
+cadesMethods.oHashedData = function oHashedData() {
+  return this.createObject(this.O_HASHED_DATA);
+};
 
 const cadescomMethods = Object.create(cadesMethods);
 
@@ -97,7 +106,8 @@ cadescomMethods.init({
   O_SIGNED_DATA: 'CAdESCOM.CadesSignedData',
   O_SIGNER: 'CAdESCOM.CPSigner',
   O_SIGNED_XML: 'CAdESCOM.SignedXML',
-  O_ABOUT: 'CAdESCOM.About'
+  O_ABOUT: 'CAdESCOM.About',
+  O_HASHED_DATA: 'CAdESCOM.HashedData'
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

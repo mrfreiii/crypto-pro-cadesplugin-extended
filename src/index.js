@@ -20,7 +20,9 @@ const cadespluginOnload = () =>
                 currentCadesCert,
                 signBase64,
                 signXml,
-                about
+                about,
+                verifyBase64,
+                getHashByGOST,
             } = CertificatesApi;
 
             return {
@@ -29,7 +31,9 @@ const cadespluginOnload = () =>
                 currentCadesCert,
                 signBase64,
                 signXml,
-                about
+                about,
+                verifyBase64,
+                getHashByGOST,
             };
         } catch (error) {
             throw new Error(error);

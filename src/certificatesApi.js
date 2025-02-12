@@ -21,6 +21,9 @@ const {
     CADESCOM_BASE64_TO_BINARY,
     CADESCOM_CADES_BES,
     CADESCOM_XML_SIGNATURE_TYPE_ENVELOPED,
+    CADESCOM_HASH_ALGORITHM_CP_GOST_3411,
+    CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256,
+    CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_512,
   },
 } = require('./constants')
 
@@ -255,6 +258,82 @@ CertificatesApi.signXml = async function signXml(
     return await oSignerXML.Sign(oSigner)
   } catch (error) {
     throw new Error(error.message);
+  }
+}
+
+/**
+ * @async
+ * @method verifyBase64
+ * @param {String} base64 строка в формате base64
+ * @param {String} signature подпись
+ * @param {Boolean} type тип подписи true=откреплённая false=прикреплённая
+ * @throws {Error}
+ * @description
+ * проверка подписи для строки base64
+ * возвращает undefined если подпись валидная
+ */
+CertificatesApi.verifyBase64 = async function verify(base64, signature, type = true) {
+  try {
+    if (!base64) {
+      throw new Error('Не указаны данные для подписи')
+    }
+
+    if (!signature) {
+      throw new Error('Не указана подпись');
+    }
+
+    const oSignedData = await cadescomMethods.oSignedData();
+
+    await oSignedData.propset_ContentEncoding(CADESCOM_BASE64_TO_BINARY);
+    await oSignedData.propset_Content(base64);
+
+    return await oSignedData.VerifyCades(signature, CADESCOM_CADES_BES, type);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * @async
+ * @method getHashByGOST
+ * @param {String} base64 строка в формате base64
+ * @param {number} type число, определяющее тип ГОСТ:
+ *        1 - ГОСТ Р 34.11-94;
+ *        2 - ГОСТ Р 34.11-2012 256 бит;
+ *        3 - ГОСТ Р 34.11-2012 512 бит;
+ * @throws {Error}
+ * @description вычисление хеш-значения бинарных данных по ГОСТ 3411
+ */
+CertificatesApi.getHashByGOST = async function getHashByGOST(base64, type = 2) {
+  try {
+    if (!base64) {
+      throw new Error('Не указаны данные для хеширования')
+    }
+
+    const oHashedData = await cadescomMethods.oHashedData();
+
+    let algorithm;
+    switch (type){
+      case 1:
+        algorithm = CADESCOM_HASH_ALGORITHM_CP_GOST_3411;
+        break;
+      case 3:
+        algorithm = CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_512;
+        break;
+      case 2:
+      default:
+        algorithm = CADESCOM_HASH_ALGORITHM_CP_GOST_3411_2012_256;
+        break;
+    }
+
+    await oHashedData.propset_Algorithm(algorithm);
+    await oHashedData.propset_DataEncoding(CADESCOM_BASE64_TO_BINARY);
+
+    await oHashedData.Hash(base64);
+
+    return await oHashedData.Value;
+  } catch (error) {
+    throw new Error(error.message)
   }
 }
 

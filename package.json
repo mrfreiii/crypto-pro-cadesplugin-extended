@@ -1,6 +1,6 @@
 {
-  "name": "crypto-pro-cadesplugin",
-  "version": "1.1.1",
+  "name": "crypto-pro-cadesplugin-extended",
+  "version": "1.0.0",
   "description": "Библиотека предоставляет API для работы c cadesplugin и Крипто Про",
   "main": "dist/index.js",
   "files": [
@@ -14,9 +14,10 @@
     "ver-minor": "npm version minor -m \"Upgrade minor to %s\"",
     "ver-patch": "npm version patch -m \"Upgrade patch to  %s\""
   },
-  "author": "bad4iz <cadesplugin@bad4iz.ru>",
+  "author": "Igor Titov",
   "keywords": [
     "crypto-pro-cadesplugin",
+    "crypto-pro-cadesplugin-extended",
     "cadesplugin",
     "Крипто Про",
     "криптоПро",
@@ -36,13 +37,10 @@
   "dependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bad4iz/crypto-pro-cadesplugin.git"
-  },
-  "bugs": {
-    "url": "https://github.com/bad4iz/crypto-pro-cadesplugin/issues"
+    "url": "https://github.com/mrfreiii/crypto-pro-cadesplugin-extended.git"
   },
   "license": "ISC",
-  "homepage": "https://github.com/bad4iz/crypto-pro-cadesplugin#readme",
+  "homepage": "https://github.com/mrfreiii/crypto-pro-cadesplugin-extended#readme",
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2"
