@@ -1,6 +1,6 @@
 {
   "name": "crypto-pro-cadesplugin-extended",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Библиотека предоставляет API для работы c cadesplugin и Крипто Про",
   "main": "dist/index.js",
   "files": [
