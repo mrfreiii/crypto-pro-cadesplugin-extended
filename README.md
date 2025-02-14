@@ -7,6 +7,7 @@
 * Добавлены методы:
   - **verifyBase64(base64, signature, type)**
   - **getHashByGOST(base64, type)**
+  - **getSignatureInfo(base64, signature, type)**
 
 <br/>
 
