@@ -8,16 +8,19 @@
   - **verifyBase64(base64, signature, type)**
   - **getHashByGOST(base64, type)**
 
+<br/>
+
 ### Проверка подписи
 **verifyBase64(base64, signature, type)**\
 Значение ``type`` по умолчанию ``true``(откреплённая подпись, аналогично методу <b>signBase64</b>).\
-Метод возвращает ``undefined``, если подпись валидная.
+Метод возвращает ``true`` для валидной подписи и ``false`` для невалидной.
 ```js
 const api = await ccpa();
 const sign = await api.signBase64(thumbprint, dataInBase64);
 
-const verificationResult = await api.verifyBase64(dataInBase64, sign);
+const isValid = await api.verifyBase64(dataInBase64, sign);
 ```
+<br/>
 
 ### Вычисление хеш-значения по ГОСТ
 **getHashByGOST(base64, type)**\
@@ -29,4 +32,16 @@ const verificationResult = await api.verifyBase64(dataInBase64, sign);
 const api = await ccpa();
 
 const hash = await api.getHashByGOST(dataInBase64);
+```
+<br/>
+
+### Получение информации из подписи
+**getSignatureInfo(base64, signature, type)**\
+Значение ``type`` по умолчанию ``true``(откреплённая подпись, аналогично методу <b>signBase64</b>).\
+Метод возвращает 2 значения: ``signerInfo`` и ``signingTime``.
+```js
+const api = await ccpa();
+const sign = await api.signBase64(thumbprint, dataInBase64);
+
+const signatureInfo = await api.getSignatureInfo(dataInBase64, sign);
 ```

@@ -26,7 +26,8 @@ const cadespluginOnload = () => async function cadespluginOnload() {
             signXml,
             about,
             verifyBase64,
-            getHashByGOST
+            getHashByGOST,
+            getSignatureInfo
         } = CertificatesApi;
 
         return {
@@ -37,7 +38,8 @@ const cadespluginOnload = () => async function cadespluginOnload() {
             signXml,
             about,
             verifyBase64,
-            getHashByGOST
+            getHashByGOST,
+            getSignatureInfo
         };
     } catch (error) {
         throw new Error(error);

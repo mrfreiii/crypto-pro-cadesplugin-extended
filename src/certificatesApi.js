@@ -270,7 +270,7 @@ CertificatesApi.signXml = async function signXml(
  * @throws {Error}
  * @description
  * проверка подписи для строки base64
- * возвращает undefined если подпись валидная
+ * возвращает true - подпись валидная, false - подпись невалидная,
  */
 CertificatesApi.verifyBase64 = async function verify(base64, signature, type = true) {
   try {
@@ -287,9 +287,10 @@ CertificatesApi.verifyBase64 = async function verify(base64, signature, type = t
     await oSignedData.propset_ContentEncoding(CADESCOM_BASE64_TO_BINARY);
     await oSignedData.propset_Content(base64);
 
-    return await oSignedData.VerifyCades(signature, CADESCOM_CADES_BES, type);
+    await oSignedData.VerifyCades(signature, CADESCOM_CADES_BES, type);
+    return true;
   } catch (error) {
-    throw new Error(error.message);
+    return false;
   }
 };
 
@@ -336,6 +337,49 @@ CertificatesApi.getHashByGOST = async function getHashByGOST(base64, type = 2) {
     throw new Error(error.message)
   }
 }
+
+/**
+ * @async
+ * @method getSignatureInfo
+ * @param {String} base64 строка в формате base64
+ * @param {String} signature подпись
+ * @param {Boolean} type тип подписи true=откреплённая false=прикреплённая
+ * @throws {Error}
+ * @description получение информации из подписи
+ */
+CertificatesApi.getSignatureInfo = async function getSignatureInfo(base64, signature, type = true) {
+  try {
+    if (!base64) {
+      throw new Error("Не указаны данные для подписи");
+    }
+
+    if (!signature) {
+      throw new Error("Не указана подпись");
+    }
+
+    const oSignedData = await cadescomMethods.oSignedData();
+
+    await oSignedData.propset_ContentEncoding(CADESCOM_BASE64_TO_BINARY);
+    await oSignedData.propset_Content(base64);
+
+    await oSignedData.VerifyCades(signature, CADESCOM_CADES_BES, type);
+
+    const signers = await oSignedData.Signers;
+    // const signersCount = await oSigners.Count; //Возвращает количество объектов Signer в коллекции.
+    const firstSigner = await signers.Item(1);
+
+    const certificate = await firstSigner.Certificate;
+    const signerInfo = await certificate.SubjectName;
+    const signingTime = await firstSigner.SigningTime;
+
+    return {
+      signerInfo,
+      signingTime,
+    };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // NOTE Exports
