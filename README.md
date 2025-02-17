@@ -1,5 +1,9 @@
 # cadesplugin-extended
 
+![](https://img.shields.io/npm/v/crypto-pro-cadesplugin-extended.svg)
+![](https://img.shields.io/npm/dt/crypto-pro-cadesplugin-extended.svg)\
+[npm crypto-pro-cadesplugin-extended](https://www.npmjs.com/package/crypto-pro-cadesplugin-extended)
+
 #### Forked from: https://github.com/bad4iz/crypto-pro-cadesplugin
 
 ### Изменения:
